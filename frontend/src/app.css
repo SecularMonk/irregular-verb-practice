@@ -1,0 +1,100 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  line-height: 1.4;
+  color: #1c1c1c;
+  background: #f8f9fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.app-shell h1 {
+  margin: 0 0 0.3rem;
+}
+
+.subtle {
+  color: #5f6b7a;
+  font-size: 0.9rem;
+  margin-top: 0;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #d8dde5;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.8rem 0 1rem;
+}
+
+.tabs button {
+  background: #eef2f7;
+}
+
+.tabs .tab-active {
+  background: #d8e4ff;
+  border-color: #95afe8;
+}
+
+.field-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+
+button,
+select,
+input {
+  border: 1px solid #c4cbd5;
+  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.95rem;
+}
+
+button {
+  cursor: pointer;
+  background: #eef2f7;
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+input {
+  min-width: 180px;
+}
+
+.exercise-box,
+.result-box,
+.stats {
+  border-top: 1px solid #eef1f5;
+  padding-top: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.recent-list {
+  padding-left: 1rem;
+}
+
+.error {
+  color: #b21f2d;
+  font-size: 0.9rem;
+}
