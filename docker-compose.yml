@@ -3,11 +3,10 @@ services:
     build:
       context: ./backend
     environment:
+      # Only LLM_API_KEY is needed; everything else defaults in app/core/config.py.
+      # DATABASE_URL is overridden here so the SQLite file lives on the named volume.
       DATABASE_URL: sqlite:///./data/irregular_verbs.db
-      FRONTEND_ORIGIN: http://localhost:5173
       LLM_API_KEY: ${LLM_API_KEY:-}
-      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
-      AI_MAX_RETRIES: ${AI_MAX_RETRIES:-2}
     ports:
       - "8000:8000"
     volumes:

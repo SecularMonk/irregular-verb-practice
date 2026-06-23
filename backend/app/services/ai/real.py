@@ -43,15 +43,34 @@ class RealAIProvider(AIProvider):
         del db
         del user_id
         self.logger.info("Generating exercise with real AI provider.")
+        difficulty_guidance = {
+            1: (
+                "easy: use one short sentence in simple past with a common irregular verb "
+                "(e.g., go/went, see/saw). Keep context straightforward."
+            ),
+            2: (
+                "medium effort: use moderate grammar complexity such as present perfect or past perfect. "
+                "Use a sentence with slightly richer context."
+            ),
+            3: (
+                "hard: use advanced structures such as third conditionals, passive constructions, "
+                "or modal perfect forms. Use a less obvious context."
+            ),
+        }[difficulty]
         system_prompt = (
             "You generate English irregular verb exercises. "
             "Return only JSON with keys: exercise_type, difficulty, prompt, corrected_answer, explanation."
         )
         user_prompt = (
             f"Create one {exercise_type} exercise with difficulty {difficulty}. "
-            "Prompt must include exactly one blank represented by ___ and include the base verb in parentheses."
+            f"Difficulty {difficulty} means: {difficulty_guidance} "
+            "Prompt must include exactly one blank represented by ___ and include the base verb in parentheses. "
+            "Pick a fresh, varied irregular verb and scenario each time; do not default to common examples "
+            "like go/went or the same sentence you would usually produce. "
+            "The explanation should briefly justify the tense/form choice at the selected difficulty level."
         )
-        return await self._chat_json(system_prompt=system_prompt, user_prompt=user_prompt)
+        # High temperature so repeated generations at the same difficulty vary.
+        return await self._chat_json(system_prompt=system_prompt, user_prompt=user_prompt, temperature=1.0)
 
     async def evaluate_attempt(
         self,
@@ -78,9 +97,10 @@ class RealAIProvider(AIProvider):
             "Mark is_correct true only if the user answer exactly fits the blank for this exercise. "
             "Always return corrected_answer as the best correct form for the blank."
         )
-        return await self._chat_json(system_prompt=system_prompt, user_prompt=user_prompt)
+        # Low temperature: grading must be deterministic and consistent.
+        return await self._chat_json(system_prompt=system_prompt, user_prompt=user_prompt, temperature=0.0)
 
-    async def _chat_json(self, *, system_prompt: str, user_prompt: str) -> str:
+    async def _chat_json(self, *, system_prompt: str, user_prompt: str, temperature: float) -> str:
         payload: dict[str, Any] = {
             "model": self.settings.llm_model,
             "response_format": {"type": "json_object"},
@@ -88,7 +108,7 @@ class RealAIProvider(AIProvider):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            "temperature": 0.2,
+            "temperature": temperature,
         }
         headers = {
             "Authorization": f"Bearer {self.settings.llm_api_key}",

@@ -45,6 +45,23 @@ Dockerised for portability.
   - Recent attempts
 - Seeded question bank (25 deterministic records) in SQLite
 
+## Setup
+
+From the project root, copy the example env file and paste in your OpenAI key:
+
+```bash
+cp .env.example .env
+```
+
+`LLM_API_KEY` is the only variable you need to set. Everything else has a sensible default in `backend/app/core/config.py`, so setup is just copy → paste key → run.
+
+Provider selection:
+
+- Key present: live LLM-generated exercises and AI grading (`RealAIProvider`).
+- Key missing/empty: deterministic seed-bank questions and exact-match grading (`StubAIProvider`).
+
+On startup the backend logs which provider mode it selected and why.
+
 ## Run Anywhere (Recommended)
 
 From project root:
@@ -74,30 +91,6 @@ This script:
 2. Ensures backend dependencies are installed
 3. Seeds SQLite question bank
 4. Starts backend and frontend
-
-## Environment Variables
-
-Environment ownership is split to avoid duplicate declarations:
-
-- Root `.env` (shared AI config):
-  - `LLM_API_KEY=<your key>` (optional)
-  - `LLM_MODEL=gpt-4o-mini` (optional)
-- `backend/.env` (backend runtime config):
-  - `AI_MAX_RETRIES=2` (optional)
-  - `DATABASE_URL=sqlite:///./irregular_verbs.db` (optional)
-  - `FRONTEND_ORIGIN=http://localhost:5173` (optional)
-  - `SESSION_COOKIE_NAME=anon_user_id` (optional)
-  - `SESSION_COOKIE_MAX_AGE_SECONDS=31536000` (optional)
-  - `SESSION_COOKIE_SECURE=false` (optional)
-
-The backend loads both files (`.env` at project root and `backend/.env`), with backend file values taking precedence when the same variable exists.
-
-Provider selection rule:
-
-- If `LLM_API_KEY` is present, use real AI provider.
-- If `LLM_API_KEY` is missing, use deterministic stub provider.
-
-On backend startup, the app logs which provider mode was selected and why.
 
 ## Tests
 
